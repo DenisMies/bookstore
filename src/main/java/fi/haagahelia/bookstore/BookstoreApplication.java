@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Bean;
 
 import fi.haagahelia.bookstore.domain.Book;
 import fi.haagahelia.bookstore.domain.BookRepository;
+import fi.haagahelia.bookstore.domain.Category;
+import fi.haagahelia.bookstore.domain.CategoryRepository;
 
 @SpringBootApplication
 public class BookstoreApplication {
@@ -21,11 +23,22 @@ public class BookstoreApplication {
 
 
 	@Bean
-	public CommandLineRunner bookdemo(BookRepository repository) {
+	public CommandLineRunner bookdemo(BookRepository repository, CategoryRepository categoryRepository) {
 		return (args) -> {
-			Book book1 = new Book("Clean Code", "Robert C. Martin", 2008, "9780132350884", 25);
-			Book book2 = new Book("The Hobbit", "J.R.R. Tolkien", 1937, "9780261103344", 20);
-			repository.save(new Book("Effective Java", "Joshua Bloch", 2018, "9780134685991", 55));
+
+			Category Fantasy = categoryRepository.save(new Category("Fantasy"));
+			Category History = categoryRepository.save(new Category("History"));
+			Category Thriller = categoryRepository.save(new Category("Thriller"));
+			Category Scifi = categoryRepository.save(new Category("Science Fiction"));
+			Category Programming = categoryRepository.save(new Category("Programming"));
+
+			Book book1 = new Book("Clean Code", "Robert C. Martin", 2008, "9780132350884", 25, Programming);
+			Book book2 = new Book("The Hobbit", "J.R.R. Tolkien", 1937, "9780261103344", 20, Fantasy);
+			repository.save(new Book("Effective Java", "Joshua Bloch", 2018, "9780134685991", 55, Programming));
+			repository.save(new Book("Sapiens", "Yuval Noah Harari", 2011, "9780062316097", 35, History));
+			repository.save(new Book("Dune", "Frank Herbert", 1965, "9780441172719", 30, Scifi));
+			repository.save(new Book("The Da Vinci Code", "Dan Brown", 2003, "9780307474278", 22, Thriller));
+
 			
 			repository.save(book1);
 			repository.save(book2); 
