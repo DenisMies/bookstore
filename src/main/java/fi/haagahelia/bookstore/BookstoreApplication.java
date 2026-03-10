@@ -6,11 +6,14 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import fi.haagahelia.bookstore.domain.Book;
 import fi.haagahelia.bookstore.domain.BookRepository;
 import fi.haagahelia.bookstore.domain.Category;
 import fi.haagahelia.bookstore.domain.CategoryRepository;
+import fi.haagahelia.bookstore.domain.User;
+import fi.haagahelia.bookstore.domain.UserRepository;
 
 @SpringBootApplication
 public class BookstoreApplication {
@@ -23,8 +26,12 @@ public class BookstoreApplication {
 
 
 	@Bean
-	public CommandLineRunner bookdemo(BookRepository repository, CategoryRepository categoryRepository) {
+	public CommandLineRunner bookdemo(BookRepository repository, CategoryRepository categoryRepository,
+		UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
 		return (args) -> {
+			User user1 = new User("user", passwordEncoder.encode("user"),"user@example.com", "USER");
+			
+			userRepository.save(new User("admin",passwordEncoder.encode("admin"), "admin@example.com","ADMIN"));
 
 			Category Fantasy = categoryRepository.save(new Category("Fantasy"));
 			Category History = categoryRepository.save(new Category("History"));
@@ -42,6 +49,7 @@ public class BookstoreApplication {
 			
 			repository.save(book1);
 			repository.save(book2); 
+			userRepository.save(user1);
 			// VOI Tallentaa suoraan tietokantaan -> repository.save(new Book...)
 			log.info("fetch all books");
 			for (Book book : repository.findAll())
